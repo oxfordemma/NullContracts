@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{670B12E3-972C-4C34-A31E-1F4A14B36AEA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FUR10N.NullContracts</RootNamespace>
+    <AssemblyName>FUR10N.NullContracts.PCL</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;PORTABLE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>0618,0612</NoWarn>
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;PORTABLE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>0618,0612</NoWarn>
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\FUR10N.NullContracts\Cache.cs">
+      <Link>Cache.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\CacheProvider.cs">
+      <Link>CacheProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\ClassAnalyzer.cs">
+      <Link>ClassAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\ExpressionAnalyzer.cs">
+      <Link>ExpressionAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\FlowAnalysis\Branch.cs">
+      <Link>FlowAnalysis\Branch.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\FlowAnalysis\Condition.cs">
+      <Link>FlowAnalysis\Condition.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\FlowAnalysis\CtorFlowAnalysis.cs">
+      <Link>FlowAnalysis\CtorFlowAnalysis.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\FlowAnalysis\CtorFlowAnalyzer.cs">
+      <Link>FlowAnalysis\CtorFlowAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\FlowAnalysis\ExpressionKey.cs">
+      <Link>FlowAnalysis\ExpressionKey.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\FlowAnalysis\ExpressionStatus.cs">
+      <Link>FlowAnalysis\ExpressionStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\FlowAnalysis\ExpressionToCondition.cs">
+      <Link>FlowAnalysis\ExpressionToCondition.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\FlowAnalysis\MethodFlowAnalysis.cs">
+      <Link>FlowAnalysis\MethodFlowAnalysis.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\FlowAnalysis\MethodFlowAnalyzer.cs">
+      <Link>FlowAnalysis\MethodFlowAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\NotNullExpressionBodyInfo.cs">
+      <Link>NotNullExpressionBodyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\NotNullFieldInfo.cs">
+      <Link>NotNullFieldInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\NotNullMethodInfo.cs">
+      <Link>NotNullMethodInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\MainAnalyzer.cs">
+      <Link>MainAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\OperationTimer.cs">
+      <Link>OperationTimer.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\ParseFailedException.cs">
+      <Link>ParseFailedException.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\RoslynExtensions.cs">
+      <Link>RoslynExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\SystemTypeSymbols.cs">
+      <Link>SystemTypeSymbols.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\Timings.cs">
+      <Link>Timings.cs</Link>
+    </Compile>
+    <Compile Include="..\FUR10N.NullContracts\ValueType.cs">
+      <Link>ValueType.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Common.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.1\lib\portable-net45+win8+wpa81+wp8\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Collections.Immutable.1.1.37\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Convention, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Hosting, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Runtime, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.TypedParts, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reactive.Core.3.0.0\lib\netstandard1.1\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reactive.Interfaces.3.0.0\lib\netstandard1.0\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reflection.Metadata.1.2.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

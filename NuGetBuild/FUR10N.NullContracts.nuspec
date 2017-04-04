@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata minClientVersion="2.7">
+    <id>FUR10N.NullContracts</id>
+    <version>1.0.0-beta7</version>
+    <title>FUR10N.NullContracts</title>
+    <authors>Nick Nicholls</authors>
+    <owners>Nick Nicholls</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>true</developmentDependency>
+    <description>Roslyn analyzer for enforcing null contracts</description>
+    <releaseNotes></releaseNotes>
+    <projectUrl>https://github.com/FUR10N/NullContracts</projectUrl>
+    <licenseUrl>https://raw.githubusercontent.com/FUR10N/NullContracts/master/LICENSE</licenseUrl>
+    <copyright>Copyright 2017 Nick Nicholls</copyright>
+    <tags>Roslyn diagnostic analyzer null contracts</tags>
+  </metadata>
+</package>

@@ -1,0 +1,39 @@
+
+#ignore thumbnails created by windows
+Thumbs.db
+#Ignore files build by Visual Studio
+*.obj
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+[Bb]in
+[Dd]ebug*/
+*.lib
+*.sbr
+obj/
+[Rr]elease*/
+_ReSharper*/
+[Tt]est[Rr]esult*
+packages/
+Build/runbuild.txt
+[Cc]overage/
+build/*/
+build/*.nuget
+build/nuget.exe
+*.nupkg
+NuGetBuild/analyzers/dotnet/cs/FUR10N.NullContracts.PCL.dll
+
+# VS 2015
+.vs/

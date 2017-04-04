@@ -1,0 +1,3 @@
+don't allow [NotNull] on override methods that are [NotNull]
+
+error if constraint is on "remoteItem.url" and you reassign "remoteItem"
