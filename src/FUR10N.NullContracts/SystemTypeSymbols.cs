@@ -42,6 +42,7 @@ namespace FUR10N.NullContracts
             StringIsNullOrEmpty = StringType.GetMembers("IsNullOrEmpty").OfType<IMethodSymbol>().First();
             StringIsNullOrWhiteSpace= StringType.GetMembers("IsNullOrWhiteSpace").OfType<IMethodSymbol>().First();
             AddRange(NotNullFrameworkMethods, StringType.GetMembers("Substring").OfType<IMethodSymbol>());
+            AddRange(NotNullFrameworkMethods, StringType.GetMembers("Replace").OfType<IMethodSymbol>());
 
             UriType = compilation.GetTypeByMetadataName(typeof(Uri).FullName);
             UriTryCreate = UriType.GetMembers("TryCreate").OfType<IMethodSymbol>().ToImmutableArray();
