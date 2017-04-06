@@ -315,7 +315,8 @@ namespace FUR10N.NullContracts
             {
                 foreach (var member in i.GetMembers(symbol.Name))
                 {
-                    if (symbol.ContainingType.FindImplementationForInterfaceMember(member).Equals(symbol))
+                    var impl = symbol.ContainingType.FindImplementationForInterfaceMember(member);
+                    if (impl != null && impl.Equals(symbol))
                     {
                         return member;
                     }
