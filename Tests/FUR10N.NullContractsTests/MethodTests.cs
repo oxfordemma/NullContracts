@@ -588,5 +588,80 @@ public class Item
             var d = GetDiagnostics(code);
             AssertIssues(d, MainAnalyzer.ReturnNullId);
         }
+
+        [Test]
+        public void ImplicitConversion_NotNull()
+        {
+            var code =
+@"
+public class Boxed<T>
+{
+    public readonly T Value;
+
+    public Boxed(T value)
+    {
+        this.Value = value;
+    }
+
+    [NotNull]
+    public static implicit operator Boxed<T>(T value)
+    {
+        return new Boxed<T>(value);
+    }
+}
+public class Item
+{
+    public Item()
+    {
+        var list = new List<Boxed<int>>();
+        Method(list, 0);
+    }
+
+    public void Method<T>(List<T> list, [NotNull] T val) where T : class
+    {
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
+
+        [Test]
+        public void ImplicitConversion_Null()
+        {
+            var code =
+@"
+public class Boxed<T>
+{
+    public readonly T Value;
+
+    public Boxed(T value)
+    {
+        this.Value = value;
+    }
+
+    public static implicit operator Boxed<T>(T value)
+    {
+        return new Boxed<T>(value);
+    }
+}
+public class Item
+{
+    public Item()
+    {
+        var list = new List<Boxed<int>>();
+        Method(list, 0);
+    }
+
+    public void Method<T>(List<T> list, [NotNull] T val) where T : class
+    {
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d, MainAnalyzer.NullAssignmentId);
+        }
     }
 }

@@ -187,6 +187,12 @@ namespace FUR10N.NullContracts
             {
                 return ExpressionStatus.NotAssigned;
             }
+            var conversion = context.SemanticModel.GetConversion(expression).MethodSymbol;
+            if (conversion != null)
+            {
+                // If a conversion method was called, then we shouldn't look at any analysis on the symbol, only analysis on the method.
+                return conversion.HasNotNull() ? ExpressionStatus.Assigned : ExpressionStatus.NotAssigned;
+            }
 
             var methodInfo = expression.GetParentMethod(context.SemanticModel);
             if (methodInfo.Item1 != null)
