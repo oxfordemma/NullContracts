@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace FUR10N.NullContracts
 {
@@ -274,6 +275,17 @@ namespace FUR10N.NullContracts
                 var symbol = context.SemanticModel.GetSymbolInfo(target).Symbol;
                 if (symbol.HasNotNullOrCheckNull())
                 {
+                    if (symbol is IParameterSymbol && expression.Parent.Parent is IfStatementSyntax ifStatement)
+                    {
+                        if (ifStatement.Statement is ThrowStatementSyntax)
+                        {
+                            return;
+                        }
+                        if (ifStatement.Statement is BlockSyntax block && block.ChildNodes().FirstOrDefault() is ThrowStatementSyntax)
+                        {
+                            return;
+                        }
+                    }
                     context.ReportDiagnostic(MainAnalyzer.CreateUnneededNullCheckError(expression.GetLocation(), symbol));
                 }
             }

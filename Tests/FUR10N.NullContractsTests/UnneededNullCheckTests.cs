@@ -632,5 +632,71 @@ public class Item
             var d = GetDiagnostics(code);
             AssertIssues(d, MainAnalyzer.UnneededNullCheckId, MainAnalyzer.UnneededNullCheckId);
         }
+
+        [Test]
+        public void AllowNullCheckIfThrowingAfterward()
+        {
+            var code =
+@"
+public class Item
+{
+
+    public void Load([NotNull] string s)
+    {
+        if (s == null)
+        {
+            throw new ArgumentNullException();
+        }
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
+
+        [Test]
+        public void DontAllowNullCheckIfThrowingAfterward()
+        {
+            var code =
+@"
+public class Item
+{
+    [NotNull] public readonly string Id = """";
+
+    public void Load()
+    {
+        if (Id == null)
+        {
+            throw new ArgumentNullException();
+        }
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d, MainAnalyzer.UnneededNullCheckId);
+        }
+
+        [Test]
+        public void NullCheckOnArgument()
+        {
+            var code =
+@"
+public class Item
+{
+
+    public void Load([NotNull] string s)
+    {
+        if (s == null)
+        {
+        }
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d, MainAnalyzer.UnneededNullCheckId);
+        }
     }
 }
