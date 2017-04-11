@@ -38,6 +38,15 @@ namespace FUR10N.NullContracts
                 .Any(i => i.AttributeClass.Name == "NotNullAttribute" || i.AttributeClass.Name == "CheckNullAttribute");
         }
 
+        public static bool HasCanBeNull(this ISymbol symbol)
+        {
+            if (symbol == null)
+            {
+                return false;
+            }
+            return GetAttributes(symbol).Any(i => i.AttributeClass.Name == "CanBeNullAttribute");
+        }
+
         private static IEnumerable<AttributeData> GetAttributes(ISymbol symbol)
         {
             foreach (var directAttr in symbol.GetAttributes())

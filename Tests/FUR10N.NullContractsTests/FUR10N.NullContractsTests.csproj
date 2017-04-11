@@ -164,6 +164,7 @@
     <Compile Include="NullAssignmentTests.cs" />
     <Compile Include="ShortCircuitTests.cs" />
     <Compile Include="TestBase.cs" />
+    <Compile Include="NeedNullCheckTests.cs" />
     <Compile Include="UnneededNullCheckTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

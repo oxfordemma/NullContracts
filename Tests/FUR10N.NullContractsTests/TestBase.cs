@@ -84,6 +84,7 @@ using System.Linq.Expressions;
 using System.Collections.Generic;
 public class NotNullAttribute : System.Attribute { }
 public class CheckNullAttribute : System.Attribute { }
+public class CanBeNullAttribute : System.Attribute { }
 public static class Constraint
 {
     public static void NotNull(Expression<Func<object>> func)

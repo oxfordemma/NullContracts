@@ -37,6 +37,33 @@ namespace FUR10N.NullContracts
             }
         }
 
+        public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+        {
+            base.VisitMemberAccessExpression(node);
+
+            var member = node.Expression;
+            if (member == null)
+            {
+                return;
+            }
+            var symbol = context.SemanticModel.GetSymbolInfo(member).Symbol;
+            if (!symbol.HasCanBeNull())
+            {
+                return;
+            }
+            var parentMethod = node.GetParentMethod(context.SemanticModel);
+            if (parentMethod.Item1 == null)
+            {
+                return;
+            }
+            var analysis = Cache.Get(context.SemanticModel).GetMethodAnalysis(parentMethod.Item1, parentMethod.Item2, parentMethod.Item3);
+            var result = analysis.IsAlwaysAssigned(member, node);
+            if (result == ExpressionStatus.NotAssigned)
+            {
+                context.ReportDiagnostic(MainAnalyzer.CreateNeedNullCheck(node.GetLocation(), symbol.Name));
+            }
+        }
+
         public override void VisitBinaryExpression(BinaryExpressionSyntax node)
         {
             base.VisitBinaryExpression(node);

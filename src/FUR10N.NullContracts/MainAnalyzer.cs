@@ -153,6 +153,17 @@ namespace FUR10N.NullContracts
                 defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true);
 
+        public const string NeedNullCheckId = "NC4001";
+
+        internal static DiagnosticDescriptor NeedNullCheck =
+            new DiagnosticDescriptor(
+                id: NeedNullCheckId,
+                title: "Need a null check on [CanBeNull] member",
+                messageFormat: "Need a null check on [CanBeNull] member: {0}",
+                category: "Nulls",
+                defaultSeverity: DiagnosticSeverity.Error,
+                isEnabledByDefault: true);
+
         private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics = 
             ImmutableArray.Create(new[] {
                 ParseFailed,
@@ -167,7 +178,8 @@ namespace FUR10N.NullContracts
                 MissingAttribute,
                 AssignmentAfterCondition,
                 UnneededConstraint,
-                NotNullAsRefParameter });
+                NotNullAsRefParameter,
+                NeedNullCheck });
 
         public static Diagnostic CreateBadAttributeUsageError(Location location, bool forValueType)
         {
@@ -246,6 +258,11 @@ namespace FUR10N.NullContracts
         public static Diagnostic CreateNotNullAsRefParameter(Location location, string errorContext)
         {
             return Diagnostic.Create(NotNullAsRefParameter, location, errorContext);
+        }
+
+        public static Diagnostic CreateNeedNullCheck(Location location, string errorContext)
+        {
+            return Diagnostic.Create(NeedNullCheck, location, errorContext);
         }
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => supportedDiagnostics;
