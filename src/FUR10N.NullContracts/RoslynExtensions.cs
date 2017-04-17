@@ -168,6 +168,16 @@ namespace FUR10N.NullContracts
                             {
                                 return ValueType.NotNull;
                             }
+                            else
+                            {
+                                var lambda = expression.FindParent<LambdaExpressionSyntax>();
+                                var delegateInvoke = TryGetLambdaDelegateConversion(lambda, model);
+                                if (delegateInvoke != null)
+                                {
+                                    var paramIndex = ((IMethodSymbol)identifier.ContainingSymbol).Parameters.IndexOf(parameterSymbol);
+                                    return delegateInvoke.Parameters[paramIndex].HasNotNullOrCheckNull() ? ValueType.NotNull : ValueType.Null;
+                                }
+                            }
                         }
                     }
                     if (identifier != null && Cache.Get(model).Symbols.IsPropertyThatIsNotNull(identifier))
@@ -259,6 +269,37 @@ namespace FUR10N.NullContracts
                     return ValueType.NotNull;
             }
             return ValueType.MaybeNull;
+        }
+
+        private static IMethodSymbol TryGetLambdaDelegateConversion(LambdaExpressionSyntax lambda, SemanticModel model)
+        {
+            // Check if we are a lambda that is a method argument
+            if (lambda == null || !(lambda.Parent is ArgumentSyntax))
+            {
+                return null;
+            }
+            var index = ((ArgumentListSyntax)lambda.Parent.Parent).Arguments.IndexOf((ArgumentSyntax)lambda.Parent);
+            if (index == -1)
+            {
+                // Shouldn't happen
+                return null;
+            }
+            var targetMethod = lambda.FindParent<InvocationExpressionSyntax>();
+            if (targetMethod == null)
+            {
+                return null;
+            }
+            var methodSymbol = model.GetSymbolInfo(targetMethod).Symbol as IMethodSymbol;
+            if (methodSymbol == null)
+            {
+                return null;
+            }
+            var parameter = methodSymbol.Parameters[index];
+            if (parameter.Type?.TypeKind != TypeKind.Delegate)
+            {
+                return null;
+            }
+            return (parameter.Type as INamedTypeSymbol)?.DelegateInvokeMethod;
         }
 
         private static ValueType GetTypeFromAwaitExpression(AwaitExpressionSyntax expression, SemanticModel model)

@@ -1246,5 +1246,73 @@ public class Main
             var d = GetDiagnostics(code);
             AssertIssues(d, MainAnalyzer.NullAssignmentId);
         }
+
+        [Test]
+        public void NotNullDelegate_Success()
+        {
+            var code =
+@"
+public class Item
+{
+    public delegate void SomeEvent([NotNull] Item item);
+
+    public void Register(SomeEvent action)
+    {
+    }
+}
+
+public class Main
+{
+    public Item Item { get; set; }
+    
+    public void Load()
+    {
+        var item = new Item();
+        item.Register(i => Method(i));
+    }
+
+    private void Method([NotNull] Item item)
+    {
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
+
+        [Test]
+        public void NullDelegate_Fails()
+        {
+            var code =
+@"
+public class Item
+{
+    public delegate void SomeEvent(Item item);
+
+    public void Register(SomeEvent action)
+    {
+    }
+}
+
+public class Main
+{
+    public Item Item { get; set; }
+    
+    public void Load()
+    {
+        var item = new Item();
+        item.Register(i => Method(i));
+    }
+
+    private void Method([NotNull] Item item)
+    {
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d, MainAnalyzer.NullAssignmentId);
+        }
     }
 }
