@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
@@ -221,8 +222,36 @@ namespace FUR10N.NullContracts
                     // Is object initializer
                     return;
                 }
-                var parameters = methodDefinition.Parameters.GetEnumerator();
-                foreach (var arg in argumentList.Arguments)
+                ImmutableArray<IParameterSymbol>.Enumerator parameters;
+                IEnumerable<ExpressionSyntax> arguments;
+                // Extension method
+                if (methodDefinition.ReducedFrom != null)
+                {
+                    var invocation = ((InvocationExpressionSyntax)node).Expression;
+                    ExpressionSyntax firstArg = null;
+                    // TODO: handle extension methods on other things like MemberBindingExpressionSyntax
+                    if (invocation is MemberAccessExpressionSyntax access)
+                    {
+                        firstArg = access.Expression;
+                    }
+
+                    if (firstArg != null)
+                    {
+                        parameters = methodDefinition.ReducedFrom.Parameters.GetEnumerator();
+                        arguments = new[] { firstArg }.Concat(argumentList.Arguments.Select(i => i.Expression));
+                    }
+                    else
+                    {
+                        parameters = methodDefinition.Parameters.GetEnumerator();
+                        arguments = argumentList.Arguments.Select(i => i.Expression);
+                    }
+                }
+                else
+                {
+                    parameters = methodDefinition.Parameters.GetEnumerator();
+                    arguments = argumentList.Arguments.Select(i => i.Expression);
+                }
+                foreach (var arg in arguments)
                 {
                     parameters.MoveNext();
                     if (parameters.Current.IsParams)
@@ -232,10 +261,10 @@ namespace FUR10N.NullContracts
                     }
                     if (parameters.Current.RefKind == RefKind.Ref)
                     {
-                        var argSymbol = context.SemanticModel.GetSymbolInfo(arg.Expression).Symbol;
+                        var argSymbol = context.SemanticModel.GetSymbolInfo(arg).Symbol;
                         if (argSymbol.HasNotNullOrCheckNull())
                         {
-                            context.ReportDiagnostic(MainAnalyzer.CreateNotNullAsRefParameter(arg.Expression.GetLocation(), arg.Expression.ToString()));
+                            context.ReportDiagnostic(MainAnalyzer.CreateNotNullAsRefParameter(arg.GetLocation(), arg.ToString()));
                             continue;
                         }
                     }
@@ -244,8 +273,8 @@ namespace FUR10N.NullContracts
                         // Only check [NotNull] parameters
                         continue;
                     }
-                    var status = GetAssignmentStatus(arg.Expression, node, arg.Expression.GetTypeOfValue(context.SemanticModel));
-                    reportAction(status, arg.GetLocation(), $"{methodDefinition.Name}({arg.Expression})");
+                    var status = GetAssignmentStatus(arg, node, arg.GetTypeOfValue(context.SemanticModel));
+                    reportAction(status, arg.GetLocation(), $"{methodDefinition.Name}({arg})");
                 }
             }
             catch (Exception ex)

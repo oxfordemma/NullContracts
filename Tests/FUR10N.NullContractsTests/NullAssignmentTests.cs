@@ -1214,5 +1214,37 @@ public class Item
             var d = GetDiagnostics(code);
             AssertIssues(d, MainAnalyzer.NotNullAsRefParameterId);
         }
+
+        [Test]
+        public void NotNullExtensionMethod()
+        {
+            var code =
+@"
+public static class Extensions
+{
+    public static void Method([NotNull] this Item item, string id)
+    {
+    }
+}
+
+public class Item
+{
+    public string Id { get; set; }
+}
+
+public class Main
+{
+    public Item Item { get; set; }
+    
+    public void Load()
+    {
+        Item.Method(""Id"");
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d, MainAnalyzer.NullAssignmentId);
+        }
     }
 }
