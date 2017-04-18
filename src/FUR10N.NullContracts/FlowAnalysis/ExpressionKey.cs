@@ -41,6 +41,14 @@ namespace FUR10N.NullContracts.FlowAnalysis
             {
                 return GetBasicExpression(cast.Expression);
             }
+            else if (expression is ParenthesizedExpressionSyntax paren)
+            {
+                return GetBasicExpression(paren.Expression);
+            }
+            else if (expression is AssignmentExpressionSyntax assignment)
+            {
+                return GetBasicExpression(assignment.Right);
+            }
             return expression;
         }
 

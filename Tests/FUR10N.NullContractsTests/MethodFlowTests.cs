@@ -1075,5 +1075,127 @@ public class C
             var d = GetDiagnostics(code);
             AssertIssues(d);
         }
+
+        [Test]
+        public void CheckAllAssignments_NonLocal_Fails()
+        {
+            var code =
+@"
+public class Item
+{
+    public string Id { get; set; }
+}
+
+public class C
+{
+    public C(Item item)
+    {
+        item.Id = """";
+
+        M(item.Id);
+    }
+
+    private void M([NotNull]string id)
+    {
+    }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d, MainAnalyzer.NullAssignmentId);
+        }
+
+        [Test]
+        public void CheckAllAssignments_Simple_Fails()
+        {
+            var code =
+@"
+public class Item
+{
+    public string Id { get; set; }
+}
+
+public class C
+{
+    public C()
+    {
+        string id = null;
+        if (this is Item)
+        {
+            id = """";
+        }
+
+        M(id);
+    }
+
+    private void M([NotNull]string id)
+    {
+    }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d, MainAnalyzer.NullAssignmentId);
+        }
+
+        [Test]
+        public void CheckAllAssignments_AssignmentIsNull_Fails()
+        {
+            var code =
+@"
+public class Item
+{
+    public string Id { get; set; }
+}
+
+public class C
+{
+    public C(object s)
+    {
+        if (s is object)
+        {
+            string id = (string)s;
+            id = s as string;
+            M(id);
+        }
+    }
+
+    private void M([NotNull]string id)
+    {
+    }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d, MainAnalyzer.NullAssignmentId);
+        }
+
+        [Test]
+        public void CheckAllAssignments_Success()
+        {
+            var code =
+@"
+public class Item
+{
+    public string Id { get; set; }
+}
+
+public class C
+{
+    public C(object s)
+    {
+        if (s is string)
+        {
+            string id = (string)s;
+            id = s as string;
+            M(id);
+        }
+    }
+
+    private void M([NotNull]string id)
+    {
+    }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
     }
 }

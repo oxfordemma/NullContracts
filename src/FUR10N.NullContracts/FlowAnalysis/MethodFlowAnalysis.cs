@@ -58,7 +58,7 @@ namespace FUR10N.NullContracts.FlowAnalysis
             yield break;
         }
 
-        public ExpressionStatus IsAlwaysAssigned(ExpressionSyntax expression, SyntaxNode parent)
+        public ExpressionStatus IsAlwaysAssigned(ExpressionSyntax expression, SyntaxNode parent, bool searchAssignments = true)
         {
             using (new OperationTimer(i => Timings.Update(TimingOperation.IsAlwaysAssigned, i)))
             {
@@ -96,6 +96,18 @@ namespace FUR10N.NullContracts.FlowAnalysis
 
                 if (branchWithNullCheck == null)
                 {
+                    if (searchAssignments && argSymbol is ILocalSymbol)
+                    {
+                        var questionableAssignments = assignmentsForExpression.Where(i => i.Value != ValueType.NotNull).ToList();
+                        if (questionableAssignments.Count > 0)
+                        {
+                            if (questionableAssignments.Any(i => !IsAlwaysAssigned(i.Expression, parent, false).IsAssigned()))
+                            {
+                                return ExpressionStatus.NotAssigned;
+                            }
+                            return ExpressionStatus.Assigned;
+                        }
+                    }
                     return ExpressionStatus.NotAssigned;
                 }
 
