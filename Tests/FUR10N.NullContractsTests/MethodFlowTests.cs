@@ -254,6 +254,35 @@ public class Item
         }
 
         [Test]
+        public void IsUsing()
+        {
+            var code =
+@"
+public class Item : IDisposable
+{
+    public Item(string id)
+    {
+        using (this)
+        {
+            if (id != null)
+            {
+                M(id);
+            }
+        }
+    }
+
+    private void M([NotNull]string s)
+    {
+    }
+
+    public void Dispose() { }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
+
+        [Test]
         public void ReturnEarlyIfNull_ConditionalAccess()
         {
             var code =

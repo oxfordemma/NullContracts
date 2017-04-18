@@ -153,6 +153,11 @@ namespace FUR10N.NullContracts.FlowAnalysis
                     branch.Children.Add(BuildTree(branch, whileCondtion, whileStatement.Statement.ChildNodes(), inLambda));
                     continue;
                 }
+                else if (node is UsingStatementSyntax usingStatement)
+                {
+                    branch.Children.Add(BuildTree(branch, new Condition(ConditionType.None), usingStatement.Statement.ChildNodes(), inLambda));
+                    continue;
+                }
                 else if (node is DoStatementSyntax doStatement)
                 {
                     branch.Children.Add(BuildTree(branch, new Condition(ConditionType.While), doStatement.Statement.ChildNodes(), inLambda));
