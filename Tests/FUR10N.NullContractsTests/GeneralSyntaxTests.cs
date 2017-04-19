@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FUR10N.NullContracts;
+using NUnit.Framework;
 
 namespace FUR10N.NullContractsTests
 {
@@ -131,6 +132,31 @@ public class Item
 ";
             var d = GetDiagnostics(code);
             AssertIssues(d);
+        }
+
+        [Test]
+        public void TupleTest()
+        {
+            var code =
+@"
+public class Item
+{
+    [NotNull]
+    private readonly object tuple;
+
+    public Item()
+    {
+        (var x, var y) = TupleMethod();
+    }
+
+    private (string x, string y) TupleMethod()
+    {
+        return (""x"", ""y"");
+    }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d, MainAnalyzer.MemberNotInitializedId);
         }
     }
 }

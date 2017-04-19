@@ -32,7 +32,9 @@ namespace FUR10N.NullContractsTests
                 MetadataReference.CreateFromFile(typeof(Uri).GetTypeInfo().Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location)
+                MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(ValueTuple).Assembly.Location),
+                MetadataReference.CreateFromFile(@"packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll")
             };
             var solution = new AdhocWorkspace()
                 .CurrentSolution

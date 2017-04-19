@@ -104,17 +104,19 @@ namespace FUR10N.NullContracts
                 case ImplicitElementAccessSyntax indexer:
 #if !PORTABLE
                 case ThrowExpressionSyntax throwExpression:
+                case TupleExpressionSyntax tupleExpression:
 #endif
                     return expression;
             }
 
 #if PORTABLE
-            if (expression.Kind() == (SyntaxKind)9052)
+            // Check for ThrowExpressionSyntax and TupleExpressionSyntax
+            if (expression.Kind() == (SyntaxKind)9052 || expression.Kind() == (SyntaxKind)8926)
             {
                 return expression;
             }
 #endif
-
+            
             var binaryExpression = expression as BinaryExpressionSyntax;
             if (binaryExpression != null)
             {
