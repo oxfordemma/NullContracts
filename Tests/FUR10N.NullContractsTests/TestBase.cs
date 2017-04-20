@@ -26,6 +26,8 @@ namespace FUR10N.NullContractsTests
         {
             var projectId = ProjectId.CreateNewId(debugName: "TestProject");
 
+            var workingDirectory = Assembly.GetExecutingAssembly().GetName().CodeBase;
+            var runtime = new Uri(workingDirectory + @"..\..\..\..\..\..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll").LocalPath;
             var references = new[]
             {
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
@@ -34,7 +36,7 @@ namespace FUR10N.NullContractsTests
                 MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(ValueTuple).Assembly.Location),
-                MetadataReference.CreateFromFile(@"packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll")
+                MetadataReference.CreateFromFile(runtime)
             };
             var solution = new AdhocWorkspace()
                 .CurrentSolution
