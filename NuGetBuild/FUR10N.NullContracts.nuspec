@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
   <metadata minClientVersion="2.7">
     <id>FUR10N.NullContracts</id>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <title>FUR10N.NullContracts</title>
     <authors>Nick Nicholls</authors>
     <owners>Nick Nicholls</owners>

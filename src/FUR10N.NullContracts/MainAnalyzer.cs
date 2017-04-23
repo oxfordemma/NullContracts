@@ -2,6 +2,8 @@
 using Microsoft.CodeAnalysis;
 
 using System.Collections.Immutable;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace FUR10N.NullContracts
 {
@@ -263,6 +265,7 @@ namespace FUR10N.NullContracts
             {
                 try
                 {
+                    SetupCustomNotNullMethods(context.SemanticModel.Compilation, context.Options);
                     new ExpressionAnalyzer(context).Analyze(context.CodeBlock);
                 }
                 catch (ParseFailedException ex)
@@ -281,6 +284,7 @@ namespace FUR10N.NullContracts
             {
                 try
                 {
+                    SetupCustomNotNullMethods(context.SemanticModel.Compilation, context.Options);
                     new ClassAnalyzer(context).Analyze(context.SemanticModel);
                 }
                 catch (ParseFailedException ex)
@@ -291,6 +295,17 @@ namespace FUR10N.NullContracts
 #endif
                 }
             }
+        }
+
+        private static void SetupCustomNotNullMethods(Compilation compilation, AnalyzerOptions options)
+        {
+            var file = options.AdditionalFiles.FirstOrDefault(i =>
+                i.Path.EndsWith("NullContracts.NotNullMethods.txt", System.StringComparison.OrdinalIgnoreCase));
+            if (file == null)
+            {
+                return;
+            }
+            SystemTypeSymbols.AddExternalNotNullMethods(compilation, file);
         }
     }
 }
