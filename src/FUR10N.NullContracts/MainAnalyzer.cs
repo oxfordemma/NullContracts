@@ -297,14 +297,19 @@ namespace FUR10N.NullContracts
             }
         }
 
+        private static AdditionalText cachedFile;
+
+        private static readonly object fileLock = new object();
+
         private static void SetupCustomNotNullMethods(Compilation compilation, AnalyzerOptions options)
         {
             var file = options.AdditionalFiles.FirstOrDefault(i =>
-                i.Path.EndsWith("NullContracts.NotNullMethods.txt", System.StringComparison.OrdinalIgnoreCase));
+                i.Path.EndsWith("NullContracts.NotNullMethods.txt", System.StringComparison.OrdinalIgnoreCase)) ?? cachedFile;
             if (file == null)
             {
                 return;
             }
+            cachedFile = file;
             SystemTypeSymbols.AddExternalNotNullMethods(compilation, file);
         }
     }
