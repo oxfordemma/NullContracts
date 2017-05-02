@@ -46,7 +46,8 @@ namespace FUR10N.NullContracts
                 }
                 ExternalNotNullMethods.Clear();
                 lastConfigLength = text.Length;
-                foreach (var method in text.Lines.Select(i => i.Text.ToString().Trim()))
+                // SourceText.Lines sometimes doesn't actually split the text into multiple lines
+                foreach (var method in text.ToString().Split('\n').Select(i => i.Trim()))
                 {
                     if (!method.Contains("."))
                     {
