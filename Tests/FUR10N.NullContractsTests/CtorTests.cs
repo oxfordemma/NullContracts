@@ -61,8 +61,11 @@ public class Item
     [NotNull]
     public static readonly string Id;
 
-
     public Item()
+    {
+    }
+
+    static Item()
     {
     }
 }
@@ -416,6 +419,85 @@ public class Item
         {
             Key = ""key"";
         }
+    }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
+
+        [Test]
+        public void StaticCtor_InstanceFieldSetInAllCtors()
+        {
+            var code =
+@"
+public class Item
+{
+    [NotNull]
+    public string Id { get; }
+
+    public Item([NotNull]string id)
+    {
+        this.Id = id;
+    }
+
+    static Item()
+    {
+    }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
+
+        [Test]
+        public void StaticCtor_StaticFieldNotSet()
+        {
+            var code =
+@"
+public class Item
+{
+    [NotNull]
+    public static string StaticId { get; }
+
+    [NotNull]
+    public string InstanceId { get; }
+
+    public Item([NotNull]string id)
+    {
+        this.InstanceId = id;
+    }
+
+    static Item()
+    {
+    }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d, MainAnalyzer.MemberNotInitializedId);
+        }
+
+        [Test]
+        public void StaticFieldAndInstanceFieldSet()
+        {
+            var code =
+@"
+public class Item
+{
+    [NotNull]
+    public static string StaticId { get; }
+
+    [NotNull]
+    public string InstanceId { get; }
+
+    public Item()
+    {
+        this.InstanceId = ""instance"";
+    }
+
+    static Item()
+    {
+        StaticId = ""static"";
     }
 }
 ";

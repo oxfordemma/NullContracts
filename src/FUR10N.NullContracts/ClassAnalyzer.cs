@@ -105,18 +105,12 @@ namespace FUR10N.NullContracts
         {
             var flowAnalysis = constructorFlowAnalyzer.AnalyzeDataFlow(@class, fields);
 
-            var ctors = @class.ChildNodes().OfType<ConstructorDeclarationSyntax>().ToList();
             foreach (var member in fields.Values)
             {
                 var isInitialized = member.Initializer != null &&
                     member.Initializer.Value.GetTypeOfValue(context.SemanticModel) == ValueType.NotNull;
                 if (!isInitialized)
                 {
-                    if (member.Symbol.IsStatic)
-                    {
-                        context.ReportDiagnostic(MainAnalyzer.CreateMemberNotInitialized(member.Location, member.Symbol));
-                        continue;
-                    }
                     if (flowAnalysis.Count == 0)
                     {
                         context.ReportDiagnostic(MainAnalyzer.CreateMemberNotInitialized(member.Location, member.Symbol));

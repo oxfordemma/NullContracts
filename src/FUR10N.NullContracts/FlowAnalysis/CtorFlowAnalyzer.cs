@@ -49,6 +49,7 @@ namespace FUR10N.NullContracts.FlowAnalysis
                     return analysis;
                 }
                 var newCtor = SyntaxFactory.ConstructorDeclaration(@class.Identifier)
+                    .WithModifiers(ctor.Modifiers)
                     .WithParameterList(ctor.ParameterList)
                     .AddBodyStatements(localDeclarations)
                     .AddBodyStatements(ctor.Body.Statements.ToArray());
@@ -83,21 +84,39 @@ namespace FUR10N.NullContracts.FlowAnalysis
 
             var newModel = CreateNewModelForClass(model, newClass);
 
-            var ctorParamLists = ctors.ToDictionary(i => i.ParameterList.GetText().ToString());
+            var ctorParamLists = ctors.ToDictionary(i => GetKeyForCtor(i));
+            var instanceNotNullMembers = notNullMembers.Where(i => !i.Value.Symbol.IsStatic).ToDictionary(i => i.Key, i => i.Value);
+            var staticNotNullMembers = notNullMembers.Where(i => i.Value.Symbol.IsStatic).ToDictionary(i => i.Key, i => i.Value);
             foreach (var tempCtor in newModel.SyntaxTree.GetRoot().DescendantNodes().OfType<ConstructorDeclarationSyntax>())
             {
                 ConstructorDeclarationSyntax originalCtor;
-                if (!ctorParamLists.TryGetValue(tempCtor.ParameterList.GetText().ToString(), out originalCtor))
+                if (!ctorParamLists.TryGetValue(GetKeyForCtor(tempCtor), out originalCtor))
                 {
                     throw new InvalidOperationException($"Could not find ctor in {@class.Identifier.Text} with params: " + tempCtor.ParameterList.GetText());
                 }
+                var ctorSymbol = model.GetDeclaredSymbol(originalCtor);
+                if (ctorSymbol == null)
+                {
+                    continue;
+                }
+                var membersToCheck = ctorSymbol.IsStatic ? staticNotNullMembers : instanceNotNullMembers;
                 var flow = newModel.AnalyzeDataFlow(tempCtor.Body);
-                var alwaysAssignedMembers = notNullMembers.Values.Where(i => flow.AlwaysAssigned.Select(j => j.Name).Contains(i.TempDeclarationName));
-                var notAlwaysAssignedMembers = notNullMembers.Values.Except(alwaysAssignedMembers);
+                var alwaysAssignedMembers = membersToCheck.Values.Where(i => flow.AlwaysAssigned.Select(j => j.Name).Contains(i.TempDeclarationName));
+                var notAlwaysAssignedMembers = membersToCheck.Values.Except(alwaysAssignedMembers);
                 analysis.Add(new CtorFlowAnalysis(model, originalCtor, notAlwaysAssignedMembers));
             }
 
             return SecondPass(analysis);
+        }
+
+        private string GetKeyForCtor(ConstructorDeclarationSyntax ctor)
+        {
+            var paramList = ctor.ParameterList.GetText().ToString();
+            if (ctor.Modifiers.Any(i =>i.Kind() == SyntaxKind.StaticKeyword))
+            {
+                return "static_" + paramList;
+            }
+            return paramList;
         }
 
         /// <summary>
