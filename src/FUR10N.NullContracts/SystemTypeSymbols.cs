@@ -145,6 +145,12 @@ namespace FUR10N.NullContracts
             {
                 ConfigureAwait = task1.GetMembers("ConfigureAwait").OfType<IMethodSymbol>().FirstOrDefault();
             }
+
+            var int64 = compilation.GetTypeByMetadataName(typeof(long).FullName);
+            if (int64 != null)
+            {
+                AddRange(NotNullFrameworkMethods, int64.GetMembers("ToString").OfType<IMethodSymbol>());
+            }
         }
 
         private void AddRange<T>(HashSet<T> set, IEnumerable<T> list)

@@ -22,6 +22,14 @@
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
   
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
+    <DefineConstants>TRACE;RELEASE;PORTABLE</DefineConstants>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;PORTABLE</DefineConstants>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Compile Remove="obj\**\*.cs" />
   </ItemGroup>
@@ -37,7 +45,6 @@
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.0.0" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.1" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
   </ItemGroup>
   
   <ItemGroup>
