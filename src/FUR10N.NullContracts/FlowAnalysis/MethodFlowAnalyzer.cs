@@ -200,6 +200,10 @@ namespace FUR10N.NullContracts.FlowAnalysis
                 {
                     foreach (var section in switchStatment.Sections)
                     {
+                        foreach (var label in section.Labels)
+                        {
+                            VisitNode(branch, label);
+                        }
                         branch.Children.Add(BuildTree(branch, new Condition(ConditionType.None), section.Statements, inLambda));
                     }
                     continue;
@@ -299,6 +303,52 @@ namespace FUR10N.NullContracts.FlowAnalysis
                 this.model = model;
             }
 
+#if !PORTABLE
+            public override void VisitCasePatternSwitchLabel(CasePatternSwitchLabelSyntax node)
+            {
+                base.VisitCasePatternSwitchLabel(node);
+
+                var declaration = node.Pattern as DeclarationPatternSyntax;
+                if (declaration == null)
+                {
+                    return;
+                }
+
+                if (declaration.Designation is SingleVariableDesignationSyntax variableDesignation)
+                {
+                    var symbol = model.GetDeclaredSymbol(variableDesignation);
+                    if (symbol != null)
+                    {
+                        // variables declared in patterns are never null
+                        var item = new Assignment(symbol, node, ValueType.NotNull);
+                        Assignments.Add(item);
+                    }
+                }
+            }
+
+            public override void VisitIsPatternExpression(IsPatternExpressionSyntax node)
+            {
+                base.VisitIsPatternExpression(node);
+
+                var declaration = node.Pattern as DeclarationPatternSyntax;
+                if (declaration == null)
+                {
+                    return;
+                }
+
+                if (declaration.Designation is SingleVariableDesignationSyntax variableDesignation)
+                {
+                    var symbol = model.GetDeclaredSymbol(variableDesignation);
+                    if (symbol != null)
+                    {
+                        // variables declared in patterns are never null
+                        var item = new Assignment(symbol, node.Expression, ValueType.NotNull);
+                        Assignments.Add(item);
+                    }
+                }
+            }
+#endif
+
             public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
             {
                 base.VisitAssignmentExpression(node);
@@ -353,11 +403,11 @@ namespace FUR10N.NullContracts.FlowAnalysis
     {
         public readonly ISymbol Symbol;
 
-        public readonly ExpressionSyntax Expression;
+        public readonly SyntaxNode Expression;
 
         public readonly ValueType Value;
 
-        public Assignment(ISymbol symbol, ExpressionSyntax expression, ValueType value)
+        public Assignment(ISymbol symbol, SyntaxNode expression, ValueType value)
         {
             this.Symbol = symbol;
             this.Expression = expression;

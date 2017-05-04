@@ -15,7 +15,7 @@ namespace FUR10N.NullContracts.FlowAnalysis
 
         public readonly ITypeSymbol Type;
 
-        public ExpressionKey(ExpressionSyntax expression, SemanticModel model)
+        public ExpressionKey(SyntaxNode expression, SemanticModel model)
         {
             expression = GetBasicExpression(expression);
             if (expression is BinaryExpressionSyntax binaryExpression)
@@ -29,13 +29,13 @@ namespace FUR10N.NullContracts.FlowAnalysis
             Key = FixKey(expression.ToString());
         }
 
-        public ExpressionKey(ExpressionSyntax expression, ITypeSymbol type)
+        public ExpressionKey(SyntaxNode expression, ITypeSymbol type)
         {
             Type = type;
             Key = FixKey(GetBasicExpression(expression).ToString());
         }
 
-        private ExpressionSyntax GetBasicExpression(ExpressionSyntax expression)
+        private SyntaxNode GetBasicExpression(SyntaxNode expression)
         {
             if (expression is CastExpressionSyntax cast)
             {

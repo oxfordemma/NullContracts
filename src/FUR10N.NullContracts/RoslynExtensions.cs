@@ -480,7 +480,7 @@ namespace FUR10N.NullContracts
             {
                 if (isForEachProperty == null)
                 {
-#if PORTABLE
+#if PORTABLE || NETSTANDARD1_3
                     isForEachProperty = symbol.GetType().GetRuntimeProperty("IsForEach");
 #else
                     isForEachProperty = symbol.GetType().GetProperty("IsForEach", BindingFlags.Instance | BindingFlags.Public);

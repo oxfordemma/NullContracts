@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AwaitTests.cs" />
+    <Compile Include="PatternMatchingTests.cs" />
     <Compile Include="NotNullConditionTests.cs" />
     <Compile Include="ReassignmentTests.cs" />
     <Compile Include="MissingAttributeTests.cs" />

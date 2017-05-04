@@ -72,6 +72,22 @@ namespace FUR10N.NullContracts.FlowAnalysis
             var expression = item.Value.Expression;
             switch (expression)
             {
+#if !PORTABLE
+                case IsPatternExpressionSyntax patternExpression:
+                    {
+                        var declarationPattern = patternExpression.Pattern as DeclarationPatternSyntax;
+                        if (declarationPattern != null)
+                        {
+                            SyntaxKind newKind = !item.Value.HasNotPrefix ? SyntaxKind.NotEqualsExpression : SyntaxKind.EqualsExpression;
+                            var newExpression = SyntaxFactory.BinaryExpression(newKind, patternExpression.Expression, NullLiteral);
+                            item.Value.Expression = newExpression;
+                            item.Value.IsType = (ITypeSymbol)model.GetSymbolInfo(declarationPattern.Type).Symbol;
+                            item.Value.OriginalExpression = patternExpression.Expression;
+                            queue.Enqueue(item);
+                        }
+                        break;
+                    }
+#endif
                 case BinaryExpressionSyntax binaryExpression:
                     {
                         var kind = expression.Kind();

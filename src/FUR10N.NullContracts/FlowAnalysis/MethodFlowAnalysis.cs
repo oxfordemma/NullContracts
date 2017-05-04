@@ -58,7 +58,7 @@ namespace FUR10N.NullContracts.FlowAnalysis
             yield break;
         }
 
-        public ExpressionStatus IsAlwaysAssigned(ExpressionSyntax expression, SyntaxNode parent, bool searchAssignments = true)
+        public ExpressionStatus IsAlwaysAssigned(SyntaxNode expression, SyntaxNode parent, bool searchAssignments = true)
         {
             using (new OperationTimer(i => Timings.Update(TimingOperation.IsAlwaysAssigned, i)))
             {
@@ -128,7 +128,7 @@ namespace FUR10N.NullContracts.FlowAnalysis
         /// <param name="branchWithMatchingCondition">The branch with the condition that proves the expression is valid</param>
         /// <returns></returns>
         private bool NullAssignmentsAreInPath(
-            ExpressionSyntax expression,
+            SyntaxNode expression,
             List<Assignment> assignmentsForExpression,
             Branch branchWithMatchingCondition)
         {

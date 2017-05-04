@@ -22,14 +22,6 @@
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
   
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
-    <DefineConstants>TRACE;RELEASE;PORTABLE</DefineConstants>
-  </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;PORTABLE</DefineConstants>
-  </PropertyGroup>
-  
   <ItemGroup>
     <Compile Remove="obj\**\*.cs" />
   </ItemGroup>
