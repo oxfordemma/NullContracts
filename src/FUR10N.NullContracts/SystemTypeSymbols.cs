@@ -33,7 +33,24 @@ namespace FUR10N.NullContracts
 
         public IMethodSymbol ConfigureAwait { get; }
 
-        private readonly HashSet<IMethodSymbol> NotNullFrameworkMethods = new HashSet<IMethodSymbol>();
+        private readonly HashSet<IMethodSymbol> NotNullFrameworkMethods = new HashSet<IMethodSymbol>(new SymbolComparer());
+
+        private class SymbolComparer : IEqualityComparer<IMethodSymbol>
+        {
+            public bool Equals(IMethodSymbol x, IMethodSymbol y)
+            {
+                if (x == null)
+                {
+                    return y == null;
+                }
+                return x.Equals(y);
+            }
+
+            public int GetHashCode(IMethodSymbol obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
 
         public static void AddExternalNotNullMethods(Compilation compilation, AdditionalText config)
         {
