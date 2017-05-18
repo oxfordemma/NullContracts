@@ -155,7 +155,7 @@ public class Item
     }
 }
 ";
-            var d = GetDiagnostics(code);
+            var d = GetDiagnostics(code, true);
             AssertIssues(d, MainAnalyzer.MemberNotInitializedId);
         }
     }
