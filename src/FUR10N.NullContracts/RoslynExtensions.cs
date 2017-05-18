@@ -517,14 +517,22 @@ namespace FUR10N.NullContracts
                 {
                     if (symbol.IsConstraintMethod())
                     {
-                        var lambda = invocation.ArgumentList.Arguments.FirstOrDefault().Expression as LambdaExpressionSyntax;
-                        if (lambda != null)
+                        var argumentExpression = invocation.ArgumentList.Arguments.FirstOrDefault().Expression;
+
+                        if (argumentExpression is LambdaExpressionSyntax lambda)
                         {
                             if (lambda.Body is MemberAccessExpressionSyntax || lambda.Body is IdentifierNameSyntax)
                             {
-                                key = (ExpressionSyntax)lambda.Body;
+                                key = (ExpressionSyntax) lambda.Body;
                                 return true;
                             }
+                        }
+
+                        if (argumentExpression is MemberAccessExpressionSyntax ||
+                            argumentExpression is IdentifierNameSyntax)
+                        {
+                            key = argumentExpression;
+                            return true;
                         }
                     }
                 }

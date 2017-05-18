@@ -89,6 +89,10 @@ public static class Constraint
     public static void NotNull(Expression<Func<object>> func)
     {
     }
+
+    public static void NotNull<T>(T obj, string name)
+    {
+    }
 }
 " + code;
             var document = CreateDocument(code);
