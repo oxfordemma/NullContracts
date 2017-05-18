@@ -49,6 +49,10 @@ namespace FUR10N.NullContracts.FlowAnalysis
             }
 
             var targetSymbol = model.GetSymbolInfo(chainedCtor);
+            if (targetSymbol.Symbol == null)
+            {
+                yield break;
+            }
 
             foreach (var ctor in allCtors)
             {
