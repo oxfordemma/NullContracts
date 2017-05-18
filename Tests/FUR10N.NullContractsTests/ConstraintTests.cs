@@ -12,7 +12,7 @@ namespace FUR10N.NullContractsTests
         }
 
         [Test]
-        public void ConstraintOnMemberAccess()
+        public void ConstraintOnMemberAccessByExpression()
         {
             var code =
 @"
@@ -26,6 +26,34 @@ public class Item
     public static bool Method(Folder folder)
     {
         Constraint.NotNull(() => folder.Id);
+        return IsSomething(folder.Id);
+    }
+
+    public static bool IsSomething([NotNull]string folder)
+    {
+        return true;
+    }
+}
+";
+
+            AssertIssues(GetDiagnostics(code, false));
+        }
+
+        [Test]
+        public void ConstraintOnMemberAccessByValue()
+        {
+            var code =
+                @"
+public class Folder
+{
+    public string Id { get; set; }
+}
+
+public class Item
+{
+    public static bool Method(Folder folder)
+    {
+        Constraint.NotNull(folder.Id, nameof(folder.Id));
         return IsSomething(folder.Id);
     }
 

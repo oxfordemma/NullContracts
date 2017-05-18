@@ -33,6 +33,16 @@ public class Constraint
         }
         return result;
     }
+
+    [NotNull]
+    public static T NotNull<T>(T value, string valueName) where T : class
+    {
+        if (value == null)
+        {
+            throw new Exception();
+        }
+        return value;
+    }
 }
 ```
 
