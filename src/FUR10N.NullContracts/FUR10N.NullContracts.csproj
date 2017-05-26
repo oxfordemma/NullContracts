@@ -33,7 +33,7 @@
   
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
   </ItemGroup>
 
