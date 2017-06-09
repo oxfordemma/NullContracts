@@ -222,8 +222,8 @@ namespace FUR10N.NullContracts
                     // Is object initializer
                     return;
                 }
-                ImmutableArray<IParameterSymbol>.Enumerator parameters;
-                IEnumerable<ExpressionSyntax> arguments;
+                ImmutableArray<IParameterSymbol> parameters;
+                List<ExpressionSyntax> arguments;
                 // Extension method
                 if (methodDefinition.ReducedFrom != null)
                 {
@@ -237,29 +237,37 @@ namespace FUR10N.NullContracts
 
                     if (firstArg != null)
                     {
-                        parameters = methodDefinition.ReducedFrom.Parameters.GetEnumerator();
-                        arguments = new[] { firstArg }.Concat(argumentList.Arguments.Select(i => i.Expression));
+                        parameters = methodDefinition.ReducedFrom.Parameters;
+                        arguments = new[] { firstArg }.Concat(argumentList.Arguments.Select(i => i.Expression)).ToList();
                     }
                     else
                     {
-                        parameters = methodDefinition.Parameters.GetEnumerator();
-                        arguments = argumentList.Arguments.Select(i => i.Expression);
+                        parameters = methodDefinition.Parameters;
+                        arguments = argumentList.Arguments.Select(i => i.Expression).ToList();
                     }
                 }
                 else
                 {
-                    parameters = methodDefinition.Parameters.GetEnumerator();
-                    arguments = argumentList.Arguments.Select(i => i.Expression);
+                    parameters = methodDefinition.Parameters;
+                    arguments = argumentList.Arguments.Select(i => i.Expression).ToList();
                 }
+
+                if (parameters.Length != arguments.Count)
+                {
+                    // Compiler error
+                    return;
+                }
+
+                var parameterEnumerator = parameters.GetEnumerator();
                 foreach (var arg in arguments)
                 {
-                    parameters.MoveNext();
-                    if (parameters.Current.IsParams)
+                    parameterEnumerator.MoveNext();
+                    if (parameterEnumerator.Current.IsParams)
                     {
                         // Ignore for 'params' parameter
                         return;
                     }
-                    if (parameters.Current.RefKind == RefKind.Ref)
+                    if (parameterEnumerator.Current.RefKind == RefKind.Ref)
                     {
                         var argSymbol = context.SemanticModel.GetSymbolInfo(arg).Symbol;
                         if (argSymbol.HasNotNullOrCheckNull())
@@ -268,7 +276,7 @@ namespace FUR10N.NullContracts
                             continue;
                         }
                     }
-                    if (!parameters.Current.HasNotNullOrCheckNull())
+                    if (!parameterEnumerator.Current.HasNotNullOrCheckNull())
                     {
                         // Only check [NotNull] parameters
                         continue;

@@ -64,16 +64,15 @@ namespace FUR10N.NullContracts.FlowAnalysis
                     if (assignment != null)
                     {
                         var assignmentSymbol = model.GetSymbolInfo(assignment.Left).Symbol;
-                        if (assignmentSymbol == null)
+                        if (assignmentSymbol != null)
                         {
-                            return analysis;
-                        }
-                        NotNullFieldInfo notNullMember;
-                        if (notNullMembers.TryGetValue(assignmentSymbol, out notNullMember))
-                        {
-                            var newAssignmentTarget = SyntaxFactory.IdentifierName(notNullMember.TempDeclarationName);
-                            newCtor = newCtor.ReplaceNode(newCtorStatements[newCtorIndex], assignment.WithLeft(newAssignmentTarget));
-                            newCtorStatements = newCtor.Body.DescendantNodes().ToList();
+                            NotNullFieldInfo notNullMember;
+                            if (notNullMembers.TryGetValue(assignmentSymbol, out notNullMember))
+                            {
+                                var newAssignmentTarget = SyntaxFactory.IdentifierName(notNullMember.TempDeclarationName);
+                                newCtor = newCtor.ReplaceNode(newCtorStatements[newCtorIndex], assignment.WithLeft(newAssignmentTarget));
+                                newCtorStatements = newCtor.Body.DescendantNodes().ToList();
+                            }
                         }
                     }
                     newCtorIndex++;
