@@ -975,6 +975,51 @@ public class C
         }
 
         [Test]
+        public void EnumerableEmpty_NotNull()
+        {
+            var code =
+@"
+public class C
+{
+    public C()
+    {
+        Method(Enumerable.Empty<string>());
+    }
+
+    public void Method([NotNull] object s)
+    {
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
+
+        [Test]
+        public void First_NotNull()
+        {
+            var code =
+@"
+public class C
+{
+    public C()
+    {
+        var array = new string[0];
+        Method(array.First());
+    }
+
+    public void Method([NotNull] object s)
+    {
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
+
+        [Test]
         public void Where_NotNull()
         {
             var code =

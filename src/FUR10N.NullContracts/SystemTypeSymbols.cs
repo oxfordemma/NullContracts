@@ -125,6 +125,8 @@ namespace FUR10N.NullContracts
                 AddRange(NotNullFrameworkMethods, Enumerable.GetMembers("ToArray").OfType<IMethodSymbol>());
                 AddRange(NotNullFrameworkMethods, Enumerable.GetMembers("Where").OfType<IMethodSymbol>());
                 AddRange(NotNullFrameworkMethods, Enumerable.GetMembers("Select").OfType<IMethodSymbol>());
+                AddRange(NotNullFrameworkMethods, Enumerable.GetMembers("Empty").OfType<IMethodSymbol>());
+                AddRange(NotNullFrameworkMethods, Enumerable.GetMembers("First").OfType<IMethodSymbol>());
             }
 
             var path = compilation.GetTypeByMetadataName(typeof(System.IO.Path).FullName);
