@@ -698,5 +698,46 @@ public class Item
             var d = GetDiagnostics(code);
             AssertIssues(d, MainAnalyzer.UnneededNullCheckId);
         }
+
+        [Test]
+        public void NullCheckOnMethodParameter()
+        {
+            var code =
+@"
+public class Item
+{
+
+    public void Load(string[] s)
+    {
+        s = s ?? new string[] { };
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
+
+        [Test]
+        public void NullCheckOnArrayAccess()
+        {
+            var code =
+@"
+public class Item
+{
+
+    public void Load(string[] s)
+    {
+        var i = s[0];
+        if (i == null)
+        {
+        }
+    }
+}
+";
+
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
     }
 }

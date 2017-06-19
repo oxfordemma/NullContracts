@@ -85,6 +85,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 public class NotNullAttribute : System.Attribute { }
 public class CheckNullAttribute : System.Attribute { }
+public class IsNullCheckAttribute : System.Attribute { }
 public static class Constraint
 {
     public static void NotNull(Expression<Func<object>> func)

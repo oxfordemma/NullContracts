@@ -68,6 +68,12 @@ namespace FUR10N.NullContracts
             {
                 return;
             }
+
+            if (node.IsCheckAgainstNull(methodDefinition, out var target, out var valueType))
+            {
+                ReportIfIsNotNullSymbol(target);
+            }
+
             if (methodDefinition.IsConstraintMethod())
             {
                 if (node.IsConstraint(context.SemanticModel, out var expression))
@@ -178,7 +184,11 @@ namespace FUR10N.NullContracts
         }
 
         // This is kinda duplicated in ClassAnalyzer.CheckExpressionForNull
-        private ExpressionStatus GetAssignmentStatus(ExpressionSyntax expression, SyntaxNode parent, ValueType valueOfExpression)
+        private ExpressionStatus GetAssignmentStatus(
+            ExpressionSyntax expression,
+            SyntaxNode parent,
+            ValueType valueOfExpression,
+            AnalysisMode mode = AnalysisMode.Normal)
         {
             if (valueOfExpression == ValueType.NotNull)
             {
@@ -199,7 +209,7 @@ namespace FUR10N.NullContracts
             var methodInfo = expression.GetParentMethod(context.SemanticModel);
             if (methodInfo.Item1 != null)
             {
-                var analysis = Cache.Get(context.SemanticModel).GetMethodAnalysis(methodInfo.Item1, methodInfo.Item2, methodInfo.Item3);
+                var analysis = Cache.Get(context.SemanticModel).GetMethodAnalysis(methodInfo.Item1, methodInfo.Item2, methodInfo.Item3, mode);
                 if (analysis.HasConstraints)
                 {
                     needsConstraintChecking[methodInfo.Item1] = analysis;
@@ -307,24 +317,39 @@ namespace FUR10N.NullContracts
             }
 
             // Make sure the expression is always Not Null. This catches the case: ([NotNull]x as SomeType) which can be null.
-            if (expression.GetTypeOfValue(context.SemanticModel) == ValueType.NotNull)
+            var expressionValue = expression.GetTypeOfValue(context.SemanticModel);
+            switch (expressionValue)
             {
-                var symbol = context.SemanticModel.GetSymbolInfo(target).Symbol;
-                if (symbol.HasNotNullOrCheckNull())
-                {
-                    if (symbol is IParameterSymbol && expression.Parent.Parent is IfStatementSyntax ifStatement)
+                case ValueType.NotNull:
                     {
-                        if (ifStatement.Statement is ThrowStatementSyntax)
+                        var symbol = context.SemanticModel.GetSymbolInfo(target).Symbol;
+                        if (symbol.HasNotNullOrCheckNull())
                         {
-                            return;
+                            if (symbol is IParameterSymbol && expression.Parent.Parent is IfStatementSyntax ifStatement)
+                            {
+                                if (ifStatement.Statement is ThrowStatementSyntax)
+                                {
+                                    return;
+                                }
+                                if (ifStatement.Statement is BlockSyntax block && block.ChildNodes().FirstOrDefault() is ThrowStatementSyntax)
+                                {
+                                    return;
+                                }
+                            }
+                            context.ReportDiagnostic(MainAnalyzer.CreateUnneededNullCheckError(expression.GetLocation(), symbol));
                         }
-                        if (ifStatement.Statement is BlockSyntax block && block.ChildNodes().FirstOrDefault() is ThrowStatementSyntax)
-                        {
-                            return;
-                        }
+                        break;
                     }
-                    context.ReportDiagnostic(MainAnalyzer.CreateUnneededNullCheckError(expression.GetLocation(), symbol));
-                }
+                case ValueType.MaybeNull:
+                    {
+                        var status = GetAssignmentStatus(expression, expression, ValueType.MaybeNull, AnalysisMode.Strict);
+                        if (status.IsAssigned())
+                        {
+                            var symbol = context.SemanticModel.GetSymbolInfo(target).Symbol;
+                            context.ReportDiagnostic(MainAnalyzer.CreateUnneededNullCheckError(expression.GetLocation(), symbol));
+                        }
+                        break;
+                    }
             }
         }
     }

@@ -59,7 +59,7 @@ namespace FUR10N.NullContracts
         {
             foreach (var method in methods.Values)
             {
-                var analysis = Cache.Get(context.SemanticModel).GetMethodAnalysis(method.Symbol, method.Body, method.Body.ChildNodes());
+                var analysis = Cache.Get(context.SemanticModel).GetMethodAnalysis(method.Symbol, method.Body, method.Body.ChildNodes(), AnalysisMode.Normal);
                 foreach (var returnStatement in analysis.ReturnStatements)
                 {
                     CheckExpressionForNull(method.Symbol, returnStatement.Expression, analysis);

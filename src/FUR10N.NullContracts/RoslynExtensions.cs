@@ -38,6 +38,15 @@ namespace FUR10N.NullContracts
                 .Any(i => i.AttributeClass.Name == "NotNullAttribute" || i.AttributeClass.Name == "CheckNullAttribute");
         }
 
+        public static bool HasIsNullCheck(this IMethodSymbol symbol)
+        {
+            if (symbol == null)
+            {
+                return false;
+            }
+            return GetAttributes(symbol).Any(i => i.AttributeClass.Name == "IsNullCheckAttribute");
+        }
+
         private static IEnumerable<AttributeData> GetAttributes(ISymbol symbol)
         {
             foreach (var directAttr in symbol.GetAttributes())
@@ -133,8 +142,14 @@ namespace FUR10N.NullContracts
             throw new ParseFailedException(expression.GetLocation(), $"Parse failed on: {expression.ToString()} - Token: {expression.Kind()}");
         }
 
-        public static ValueType GetTypeOfValue(this ExpressionSyntax expression, SemanticModel model)
+        public class ValueContext
         {
+            public bool HasNotNullAttribute { get; set; }
+        }
+
+        public static ValueType GetTypeOfValue(this ExpressionSyntax expression, SemanticModel model, ValueContext context = null)
+        {
+            context = context ?? new ValueContext();
             var kind = expression.Kind();
             switch (kind)
             {
@@ -156,11 +171,13 @@ namespace FUR10N.NullContracts
                             var setterDefinition = parameterSymbol.ContainingSymbol;
                             if (parameterSymbol.ContainingSymbol.HasNotNull())
                             {
+                                context.HasNotNullAttribute = true;
                                 return ValueType.NotNull;
                             }
                             var propertyDefinition = parameterSymbol.ContainingSymbol.GetPropertySymbol();
                             if (propertyDefinition != null && propertyDefinition.HasNotNull())
                             {
+                                context.HasNotNullAttribute = true;
                                 return ValueType.NotNull;
                             }
                         }
@@ -193,6 +210,7 @@ namespace FUR10N.NullContracts
                     {
                         if (method.HasNotNull())
                         {
+                            context.HasNotNullAttribute = true;
                             return ValueType.NotNull;
                         }
                         if (Cache.Get(model).Symbols.IsMethodCallThatIsNotNull(method))
@@ -203,17 +221,17 @@ namespace FUR10N.NullContracts
                     }
                     return ValueType.MaybeNull;
                 case SyntaxKind.SimpleAssignmentExpression:
-                    return GetTypeOfValue(((AssignmentExpressionSyntax)expression).Right, model);
+                    return GetTypeOfValue(((AssignmentExpressionSyntax)expression).Right, model, context);
                 case SyntaxKind.SimpleMemberAccessExpression:
-                    return GetTypeOfValue(((MemberAccessExpressionSyntax)expression).Name, model);
+                    return GetTypeOfValue(((MemberAccessExpressionSyntax)expression).Name, model, context);
                 case SyntaxKind.CoalesceExpression:
                     var coalesceExp = ((BinaryExpressionSyntax)expression);
                     var member = coalesceExp.Right.FindUnderlyingMember();
                     if (member != null)
                     {
-                        return GetTypeOfValue(member, model);
+                        return GetTypeOfValue(member, model, context);
                     }
-                    return GetTypeOfValue(coalesceExp.Right, model);
+                    return GetTypeOfValue(coalesceExp.Right, model, context);
                 case SyntaxKind.AddExpression:
                     var symbolInfo = model.GetSymbolInfo(expression).Symbol;
                     var typeInfo = model.GetTypeInfo(expression);
@@ -232,12 +250,12 @@ namespace FUR10N.NullContracts
                     break;
                 case SyntaxKind.ConditionalExpression:
                     var conditional = (ConditionalExpressionSyntax)expression;
-                    var whenTrue = GetTypeOfValue(conditional.WhenTrue, model);
+                    var whenTrue = GetTypeOfValue(conditional.WhenTrue, model, context);
                     if (whenTrue == ValueType.MaybeNull)
                     {
                         return ValueType.MaybeNull;
                     }
-                    var whenFalse = GetTypeOfValue(conditional.WhenFalse, model);
+                    var whenFalse = GetTypeOfValue(conditional.WhenFalse, model, context);
                     if (whenFalse == ValueType.MaybeNull)
                     {
                         return ValueType.MaybeNull;
@@ -248,13 +266,13 @@ namespace FUR10N.NullContracts
                     }
                     return whenTrue;
                 case SyntaxKind.CastExpression:
-                    return GetTypeOfValue(((CastExpressionSyntax)expression).Expression, model);
+                    return GetTypeOfValue(((CastExpressionSyntax)expression).Expression, model, context);
                 case SyntaxKind.ParenthesizedExpression:
-                    return GetTypeOfValue(((ParenthesizedExpressionSyntax)expression).Expression, model);
+                    return GetTypeOfValue(((ParenthesizedExpressionSyntax)expression).Expression, model, context);
                 case SyntaxKind.AwaitExpression:
                     return GetTypeFromAwaitExpression((AwaitExpressionSyntax)expression, model);
                 case SyntaxKind.ConditionalAccessExpression:
-                    return GetTypeOfValue(((ConditionalAccessExpressionSyntax)expression).WhenNotNull, model);
+                    return GetTypeOfValue(((ConditionalAccessExpressionSyntax)expression).WhenNotNull, model, context);
                 case SyntaxKind.StringLiteralExpression:
                 case SyntaxKind.ObjectCreationExpression:
                 case SyntaxKind.ParenthesizedLambdaExpression:
@@ -320,6 +338,7 @@ namespace FUR10N.NullContracts
                     return GetTypeOfValue(memberAccess.Expression, model);
                 }
             }
+
             return GetTypeOfValue(invocation, model);
         }
 
@@ -431,6 +450,26 @@ namespace FUR10N.NullContracts
             }
             target = null;
             valueType = ValueType.MaybeNull;
+            return false;
+        }
+
+        public static bool IsCheckAgainstNull(
+            this InvocationExpressionSyntax expression,
+            IMethodSymbol method,
+            out ExpressionSyntax target,
+            out ValueType valueType)
+        {
+            if (method.HasIsNullCheck())
+            {
+                if (expression.Expression is MemberAccessExpressionSyntax memberAccess)
+                {
+                    target = memberAccess.Expression;
+                    valueType = ValueType.NotNull;
+                    return true;
+                }
+            }
+            target = null;
+            valueType = ValueType.NotNull;
             return false;
         }
 

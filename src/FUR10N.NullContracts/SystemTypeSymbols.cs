@@ -112,8 +112,8 @@ namespace FUR10N.NullContracts
             }
 
             var dictionary = compilation.GetTypeByMetadataName(typeof(Dictionary<,>).FullName);
-            DictionaryValues = dictionary.GetMembers("Values").OfType<IPropertySymbol>().First();
-            DictionaryKeys = dictionary.GetMembers("Keys").OfType<IPropertySymbol>().First();
+            DictionaryValues = dictionary?.GetMembers("Values").OfType<IPropertySymbol>().First();
+            DictionaryKeys = dictionary?.GetMembers("Keys").OfType<IPropertySymbol>().First();
 
             var guid = compilation.GetTypeByMetadataName(typeof(Guid).FullName);
             AddRange(NotNullFrameworkMethods, guid.GetMembers("ToString").OfType<IMethodSymbol>());
@@ -196,11 +196,11 @@ namespace FUR10N.NullContracts
 
         public bool IsPropertyThatIsNotNull(ISymbol property)
         {
-            if (DictionaryValues.Equals(property.OriginalDefinition))
+            if (DictionaryValues != null && DictionaryValues.Equals(property.OriginalDefinition))
             {
                 return true;
             }
-            if (DictionaryKeys.Equals(property.OriginalDefinition))
+            if (DictionaryValues != null && DictionaryKeys.Equals(property.OriginalDefinition))
             {
                 return true;
             }

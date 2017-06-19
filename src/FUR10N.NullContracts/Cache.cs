@@ -53,9 +53,9 @@ namespace FUR10N.NullContracts
             this.Symbols = new SystemTypeSymbols(model.Compilation);
         }
 
-        public MethodFlowAnalysis GetMethodAnalysis(ISymbol methodSymbol, BlockSyntax body, IEnumerable<SyntaxNode> statements)
+        public MethodFlowAnalysis GetMethodAnalysis(ISymbol methodSymbol, BlockSyntax body, IEnumerable<SyntaxNode> statements, AnalysisMode mode)
         {
-            var key = methodSymbol.ContainingNamespace.Name + "." + methodSymbol.ToDisplayString();
+            var key = methodSymbol.ContainingNamespace.Name + "." + methodSymbol.ToDisplayString() + "_" + mode;
             var existing = methodCache.Get<string, MethodFlowAnalysis>(key);
             if (existing != null)
             {
@@ -66,7 +66,7 @@ namespace FUR10N.NullContracts
                 existing = methodCache.Get<string, MethodFlowAnalysis>(key);
                 if (existing == null)
                 {
-                    existing = new MethodFlowAnalyzer(Model).Analyze(body, statements);
+                    existing = new MethodFlowAnalyzer(Model, mode).Analyze(body, statements);
                     methodCache.Add<string, MethodFlowAnalysis>(key, existing, TimeSpan.FromSeconds(20), CacheItemPriority.Normal);
                 }
                 return existing;

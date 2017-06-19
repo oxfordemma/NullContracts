@@ -149,6 +149,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\FUR10N.NullContracts\AnalysisMode.cs">
+      <Link>AnalysisMode.cs</Link>
+    </Compile>
     <Compile Include="..\FUR10N.NullContracts\Cache.cs">
       <Link>Cache.cs</Link>
     </Compile>

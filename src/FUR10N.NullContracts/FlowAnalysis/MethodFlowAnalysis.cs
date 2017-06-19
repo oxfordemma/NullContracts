@@ -24,7 +24,10 @@ namespace FUR10N.NullContracts.FlowAnalysis
 
         public List<ReturnStatementSyntax> ReturnStatements { get; }
 
+        public AnalysisMode Mode { get; }
+
         public MethodFlowAnalysis(
+            AnalysisMode mode,
             SemanticModel model,
             List<Assignment> assignments,
             ImmutableArray<ISymbol> alwaysAssignedToNotNull,
@@ -33,6 +36,7 @@ namespace FUR10N.NullContracts.FlowAnalysis
             bool hasConstraints,
             List<ReturnStatementSyntax> returnStatements)
         {
+            this.Mode = mode;
             this.model = model;
             this.assignments = assignments;
             this.AlwaysAssignedToNotNull = alwaysAssignedToNotNull;

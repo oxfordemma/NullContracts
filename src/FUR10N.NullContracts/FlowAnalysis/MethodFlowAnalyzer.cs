@@ -23,11 +23,14 @@ namespace FUR10N.NullContracts.FlowAnalysis
 
         private readonly ExpressionToCondition expressionParser;
 
+        private readonly AnalysisMode mode;
+
         private bool hasConstraints;
 
-        public MethodFlowAnalyzer(SemanticModel model)
+        public MethodFlowAnalyzer(SemanticModel model, AnalysisMode mode)
         {
             this.model = model;
+            this.mode = mode;
             expressionParser = new ExpressionToCondition(model);
         }
 
@@ -66,11 +69,12 @@ namespace FUR10N.NullContracts.FlowAnalysis
                 {
                     var data = model.AnalyzeDataFlow(body);
 
-                    var variablesThatAreAlwaysNotNull = data.AlwaysAssigned.RemoveAll(i => nullAssignments.Any(j => j.Equals(i)));
+                    var variablesThatAreAlwaysNotNull = data.AlwaysAssigned.RemoveAll(i => i is IParameterSymbol || nullAssignments.Any(j => j.Equals(i)));
 
                     var safeParameters = data.WrittenOutside.Where(i => i.HasNotNullOrCheckNull());
 
                     return new MethodFlowAnalysis(
+                        mode,
                         model,
                         assignments,
                         variablesThatAreAlwaysNotNull.AddRange(safeParameters),
@@ -79,7 +83,9 @@ namespace FUR10N.NullContracts.FlowAnalysis
                         hasConstraints,
                         returnStatements);
                 }
-                return new MethodFlowAnalysis(model,
+                return new MethodFlowAnalysis(
+                    mode,
+                    model,
                     assignments,
                     ImmutableArray.Create<ISymbol>(),
                     tree,
@@ -254,7 +260,7 @@ namespace FUR10N.NullContracts.FlowAnalysis
 
         private void VisitNode(Branch currentBranch, SyntaxNode node)
         {
-            var walker = new MethodBodyWalker(model);
+            var walker = new MethodBodyWalker(model, mode);
             walker.Visit(node);
 
             assignments.AddRange(walker.Assignments);
@@ -302,9 +308,12 @@ namespace FUR10N.NullContracts.FlowAnalysis
 
             private readonly SemanticModel model;
 
-            public MethodBodyWalker(SemanticModel model)
+            private readonly AnalysisMode mode;
+
+            public MethodBodyWalker(SemanticModel model, AnalysisMode mode)
             {
                 this.model = model;
+                this.mode = mode;
             }
 
 #if !PORTABLE
@@ -360,7 +369,13 @@ namespace FUR10N.NullContracts.FlowAnalysis
                 var symbol = model.GetSymbolInfo(node.Left).Symbol;
                 if (symbol != null)
                 {
-                    var item = new Assignment(symbol, node, node.Right.GetTypeOfValue(model));
+                    var context = new RoslynExtensions.ValueContext();
+                    var valueType = node.Right.GetTypeOfValue(model, context);
+                    if (mode == AnalysisMode.Strict && !context.HasNotNullAttribute)
+                    {
+                        valueType = ValueType.Null;
+                    }
+                    var item = new Assignment(symbol, node, valueType);
                     Assignments.Add(item);
                 }
             }
@@ -386,8 +401,13 @@ namespace FUR10N.NullContracts.FlowAnalysis
                 var symbol = model.GetDeclaredSymbol(node);
                 if (symbol != null && node.Initializer != null)
                 {
-                    var item = new Tuple<ISymbol, ExpressionSyntax>(symbol, node.Initializer.Value);
-                    Assignments.Add(new Assignment(symbol, node.Initializer.Value, node.Initializer.Value.GetTypeOfValue(model)));
+                    var context = new RoslynExtensions.ValueContext();
+                    var valueType = node.Initializer.Value.GetTypeOfValue(model, context);
+                    if (mode == AnalysisMode.Strict && !context.HasNotNullAttribute)
+                    {
+                        valueType = ValueType.Null;
+                    }
+                    Assignments.Add(new Assignment(symbol, node.Initializer.Value, valueType));
                 }
             }
 
