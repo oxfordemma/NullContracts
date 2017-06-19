@@ -64,7 +64,7 @@ public class C
         }
 
         [Test]
-        public void Await_OnNullMethod_WithConfigurAwait()
+        public void Await_OnNullMethod_WithConfigureAwait()
         {
             var code =
 @"
@@ -92,7 +92,7 @@ public class C
         }
 
         [Test]
-        public void Await_OnNotNullMethod_WithConfigurAwait()
+        public void Await_OnNotNullMethod_WithConfigureAwait()
         {
             var code =
 @"

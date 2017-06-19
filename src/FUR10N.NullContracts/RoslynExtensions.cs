@@ -199,7 +199,7 @@ namespace FUR10N.NullContracts
                         {
                             return ValueType.NotNull;
                         }
-                        return method.ReturnType.IsValueType ? ValueType.NotNull : ValueType.Null;
+                        return method.ReturnType.GetTypeFromTask().IsValueType ? ValueType.NotNull : ValueType.Null;
                     }
                     return ValueType.MaybeNull;
                 case SyntaxKind.SimpleAssignmentExpression:
@@ -321,6 +321,22 @@ namespace FUR10N.NullContracts
                 }
             }
             return GetTypeOfValue(invocation, model);
+        }
+
+        private static ITypeSymbol GetTypeFromTask(this ITypeSymbol type)
+        {
+            var result = type.GetMembers("Result").OfType<IPropertySymbol>().FirstOrDefault();
+            var awaiter = type.GetMembers("GetAwaiter").OfType<IMethodSymbol>().FirstOrDefault();
+
+            if (result != null && awaiter != null)
+            {
+                if (result.Type.Equals((awaiter.ReturnType as INamedTypeSymbol)?.TypeArguments.FirstOrDefault()))
+                {
+                    return result.Type;
+                }
+            }
+
+            return type;
         }
 
         public static bool IsLambdaMethod(this ISymbol symbol)
