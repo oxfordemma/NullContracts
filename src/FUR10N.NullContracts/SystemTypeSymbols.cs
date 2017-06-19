@@ -71,21 +71,27 @@ namespace FUR10N.NullContracts
                         return;
                     }
 
-                    var separatorIndex = method.LastIndexOf('.');
-                    var className = method.Substring(0, separatorIndex);
-                    var methodName = method.Substring(separatorIndex + 1);
-
-                    var type = compilation.GetTypeByMetadataName(className);
-                    if (type == null)
-                    {
-                        return;
-                    }
-                    foreach (var match in type.GetMembers(methodName))
+                    foreach (var match in ParseMethodName(compilation, method))
                     {
                         ExternalNotNullMethods.Add(match);
                     }
                 }
             }
+        }
+
+        private static IEnumerable<IMethodSymbol> ParseMethodName(Compilation compilation, string qualifiedMethodName)
+        {
+            var separatorIndex = qualifiedMethodName.LastIndexOf('.');
+            var className = qualifiedMethodName.Substring(0, separatorIndex);
+            var methodName = qualifiedMethodName.Substring(separatorIndex + 1);
+
+            var type = compilation.GetTypeByMetadataName(className);
+            if (type == null)
+            {
+                return ImmutableArray.Create<IMethodSymbol>();
+            }
+
+            return type.GetMembers(methodName).OfType<IMethodSymbol>();
         }
 
         public SystemTypeSymbols(Compilation compilation)
@@ -170,6 +176,9 @@ namespace FUR10N.NullContracts
             {
                 AddRange(NotNullFrameworkMethods, int64.GetMembers("ToString").OfType<IMethodSymbol>());
             }
+
+            // TODO: this should be moved to AdditionalFiles at some point
+            AddRange(NotNullFrameworkMethods, ParseMethodName(compilation, "AutoMapper.IMapper.Map"));
         }
 
         private void AddRange<T>(HashSet<T> set, IEnumerable<T> list)
