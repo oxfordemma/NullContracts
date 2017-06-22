@@ -111,6 +111,7 @@ namespace FUR10N.NullContracts
                 case ObjectCreationExpressionSyntax objectCreation:
                 case ArrayCreationExpressionSyntax arrayCreation:
                 case ImplicitElementAccessSyntax indexer:
+                case InterpolatedStringExpressionSyntax interp:
 #if !PORTABLE
                 case ThrowExpressionSyntax throwExpression:
                 case TupleExpressionSyntax tupleExpression:
