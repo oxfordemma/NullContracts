@@ -206,6 +206,10 @@ namespace FUR10N.NullContracts
                     }
                     return identifier.HasNotNullOrCheckNull() ? ValueType.NotNull : ValueType.MaybeNull;
                 case SyntaxKind.InvocationExpression:
+                    if (expression.IsNameOf())
+                    {
+                        return ValueType.NotNull;
+                    }
                     var method = model.GetSymbolInfo(expression).Symbol as IMethodSymbol;
                     if (method?.ReturnType != null)
                     {
@@ -365,6 +369,19 @@ namespace FUR10N.NullContracts
             {
                 return method.MethodKind == MethodKind.AnonymousFunction;
             }
+            return false;
+        }
+
+        public static bool IsNameOf(this ExpressionSyntax expression)
+        {
+            if (expression is InvocationExpressionSyntax method)
+            {
+                if (method.Expression is IdentifierNameSyntax id)
+                {
+                    return id.Identifier.ValueText == "nameof";
+                }
+            }
+
             return false;
         }
 

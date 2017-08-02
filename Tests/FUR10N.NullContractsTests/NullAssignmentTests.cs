@@ -1359,5 +1359,33 @@ public class Main
             var d = GetDiagnostics(code);
             AssertIssues(d, MainAnalyzer.NullAssignmentId);
         }
+
+        [Test]
+        public void NotNullFieldSetToNameof()
+        {
+            var code =
+@"
+[NotNull]
+public class Item
+{
+    [NotNull]
+    public readonly string Id;
+
+    public Item([NotNull] string id)
+    {
+        Id = id;
+    }
+}
+
+public class File : Item
+{
+    public File() : base(nameof(Item.Id))
+    {
+    }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
     }
 }
