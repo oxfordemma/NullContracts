@@ -286,6 +286,7 @@ namespace FUR10N.NullContracts
                 case SyntaxKind.ImplicitArrayCreationExpression:
                 case SyntaxKind.ArrayCreationExpression:
                 case SyntaxKind.ThisExpression:
+                case SyntaxKind.InterpolatedStringExpression:
 #if PORTABLE
                 case (SyntaxKind)9052:
 #else

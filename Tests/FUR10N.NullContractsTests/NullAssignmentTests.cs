@@ -1387,5 +1387,31 @@ public class File : Item
             var d = GetDiagnostics(code);
             AssertIssues(d);
         }
+
+        [Test]
+        public void NotNullFieldSetToStringInterp()
+        {
+            var code =
+@"
+[NotNull]
+public class Item
+{
+    [NotNull]
+    public readonly string Id;
+
+    public Item([NotNull] string id)
+    {
+        Id = id;
+    }
+
+    public static Item Create()
+    {
+        return new Item($""{nameof(Item.Id)}"");
+    }
+}
+";
+            var d = GetDiagnostics(code);
+            AssertIssues(d);
+        }
     }
 }
