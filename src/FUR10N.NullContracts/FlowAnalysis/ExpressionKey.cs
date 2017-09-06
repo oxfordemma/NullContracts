@@ -69,6 +69,10 @@ namespace FUR10N.NullContracts.FlowAnalysis
 
         public static bool operator ==(ExpressionKey e1, ExpressionKey e2)
         {
+            if (e1.Type == null)
+            {
+                return e1.Key == e2.Key;
+            }
             return e1.Key == e2.Key && e1.Type.Equals(e2.Type);
         }
 

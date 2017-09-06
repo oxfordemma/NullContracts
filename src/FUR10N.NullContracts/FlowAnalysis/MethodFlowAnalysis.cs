@@ -52,7 +52,7 @@ namespace FUR10N.NullContracts.FlowAnalysis
             {
                 foreach (var branch in GetListOfParents(assignment.Expression, out var inlineCondition))
                 {
-                    if (branch.Condition.IsConstraintFor(assignment.Symbol, model))
+                    if (branch.Condition.IsConstraintFor(assignment.Expression, model))
                     {
                         yield return assignment;
                         break;

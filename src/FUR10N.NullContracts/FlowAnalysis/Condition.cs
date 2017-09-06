@@ -94,9 +94,20 @@ namespace FUR10N.NullContracts.FlowAnalysis
         }
 
         [Pure]
-        public bool IsConstraintFor(ISymbol symbol, SemanticModel model)
+        public bool IsConstraintFor(SyntaxNode node, SemanticModel model)
         {
-            return Kind == ConditionType.Constraint && parts.Any(i => symbol.Equals(model.GetSymbolInfo(i.Expression).Symbol));
+            ExpressionKey key;
+            switch (node)
+            {
+                case AssignmentExpressionSyntax assignment:
+                    key = new ExpressionKey(assignment.Left, model);
+                    break;
+                default:
+                    key = new ExpressionKey(node, model);
+                    break;
+            }
+
+            return Kind == ConditionType.Constraint && parts.Any(i => i.Key == key);
         }
 
         [Pure]
