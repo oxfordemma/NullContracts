@@ -316,7 +316,6 @@ namespace FUR10N.NullContracts.FlowAnalysis
                 this.mode = mode;
             }
 
-#if !PORTABLE
             public override void VisitCasePatternSwitchLabel(CasePatternSwitchLabelSyntax node)
             {
                 base.VisitCasePatternSwitchLabel(node);
@@ -360,7 +359,6 @@ namespace FUR10N.NullContracts.FlowAnalysis
                     }
                 }
             }
-#endif
 
             public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
             {

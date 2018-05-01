@@ -5,11 +5,11 @@
     <AssemblyTitle>FUR10N.NullContracts</AssemblyTitle>
     <VersionPrefix>1.0.0</VersionPrefix>
     <Authors>Nick Nicholls</Authors>
-    <TargetFrameworks>netstandard1.3;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard1.4</TargetFrameworks>
     <AssemblyName>FUR10N.NullContracts</AssemblyName>
+    <LangVersion>latest</LangVersion>
     <PackageId>FUR10N.NullContracts</PackageId>
     <PackageTags>Roslyn analyzer Null Contracts</PackageTags>
-    <PackageTargetFallback Condition="'$(TargetFramework)'=='netstandard1.3'">portable-net45+win8+wpa81</PackageTargetFallback>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -20,6 +20,11 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   
   <ItemGroup>
@@ -33,7 +38,7 @@
   
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
   </ItemGroup>
 

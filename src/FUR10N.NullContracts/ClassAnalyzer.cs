@@ -127,11 +127,7 @@ namespace FUR10N.NullContracts
             }
         }
 
-#if PORTABLE
-        private Tuple<Dictionary<ISymbol, NotNullFieldInfo>, Dictionary<IMethodSymbol, NotNullMethodInfo>,  Dictionary<ISymbol, NotNullExpressionBodyInfo>> 
-#else
         private (Dictionary<ISymbol, NotNullFieldInfo> fields, Dictionary<IMethodSymbol, NotNullMethodInfo> methods, Dictionary<ISymbol, NotNullExpressionBodyInfo> expressions)
-#endif
             GetTrackedMembers(SemanticModel model, ClassDeclarationSyntax type)
         {
             var trackedFields = new Dictionary<ISymbol, NotNullFieldInfo>();
@@ -217,11 +213,7 @@ namespace FUR10N.NullContracts
                     }
                 }
             }
-#if PORTABLE
-            return new Tuple<Dictionary<ISymbol, NotNullFieldInfo>, Dictionary<IMethodSymbol, NotNullMethodInfo>, Dictionary<ISymbol, NotNullExpressionBodyInfo>>(trackedFields, trackedMethods, trackedExpressionBodies);
-#else
             return (trackedFields, trackedMethods, trackedExpressionBodies);
-#endif
         }
 
         public NotNullMethodInfo VisitMethod(SemanticModel model, MethodDeclarationSyntax method)

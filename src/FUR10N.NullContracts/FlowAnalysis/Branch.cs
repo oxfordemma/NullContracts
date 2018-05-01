@@ -11,7 +11,7 @@ namespace FUR10N.NullContracts.FlowAnalysis
 
         public Branch Parent { get; }
 
-        public Condition Condition { get; set; }
+        public Condition Condition { get; }
 
         public List<SyntaxNode> Body { get; }
 

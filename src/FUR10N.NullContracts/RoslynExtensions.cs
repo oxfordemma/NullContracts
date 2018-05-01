@@ -112,20 +112,10 @@ namespace FUR10N.NullContracts
                 case ArrayCreationExpressionSyntax arrayCreation:
                 case ImplicitElementAccessSyntax indexer:
                 case InterpolatedStringExpressionSyntax interp:
-#if !PORTABLE
                 case ThrowExpressionSyntax throwExpression:
                 case TupleExpressionSyntax tupleExpression:
-#endif
                     return expression;
             }
-
-#if PORTABLE
-            // Check for ThrowExpressionSyntax and TupleExpressionSyntax
-            if (expression.Kind() == (SyntaxKind)9052 || expression.Kind() == (SyntaxKind)8926)
-            {
-                return expression;
-            }
-#endif
             
             var binaryExpression = expression as BinaryExpressionSyntax;
             if (binaryExpression != null)
@@ -287,11 +277,7 @@ namespace FUR10N.NullContracts
                 case SyntaxKind.ArrayCreationExpression:
                 case SyntaxKind.ThisExpression:
                 case SyntaxKind.InterpolatedStringExpression:
-#if PORTABLE
-                case (SyntaxKind)9052:
-#else
                 case SyntaxKind.ThrowExpression:
-#endif
                     return ValueType.NotNull;
             }
             return ValueType.MaybeNull;
@@ -554,7 +540,7 @@ namespace FUR10N.NullContracts
             {
                 if (isForEachProperty == null)
                 {
-#if PORTABLE || NETSTANDARD1_3
+#if NETSTANDARD1_4
                     isForEachProperty = symbol.GetType().GetRuntimeProperty("IsForEach");
 #else
                     isForEachProperty = symbol.GetType().GetProperty("IsForEach", BindingFlags.Instance | BindingFlags.Public);
@@ -626,11 +612,7 @@ namespace FUR10N.NullContracts
         }
 
         // TODO: make this a help class instead
-#if PORTABLE
-        public static Tuple<ISymbol, BlockSyntax, IEnumerable<SyntaxNode>> GetParentMethod(this SyntaxNode node, SemanticModel model)
-#else
         public static (ISymbol symbol, BlockSyntax body, IEnumerable<SyntaxNode> expressions) GetParentMethod(this SyntaxNode node, SemanticModel model)
-#endif
         {
             while (!(node is MethodDeclarationSyntax) 
                 && !(node is ConstructorDeclarationSyntax) 
@@ -639,11 +621,7 @@ namespace FUR10N.NullContracts
             {
                 if (node == null)
                 {
-#if PORTABLE
-                    return new Tuple<ISymbol, BlockSyntax, IEnumerable<SyntaxNode>>(null, null, null);
-#else
                     return (null, null, null);
-#endif
                 }
                 node = node.Parent;
             }
@@ -690,17 +668,9 @@ namespace FUR10N.NullContracts
             if (methodSymbol == null || expressions == null)
             {
                 // Probably a compilation error
-#if PORTABLE
-                return new Tuple<ISymbol, BlockSyntax, IEnumerable<SyntaxNode>>(null, null, null);
-#else
                 return (null, null, null);
-#endif
             }
-#if PORTABLE
-            return new Tuple<ISymbol, BlockSyntax, IEnumerable<SyntaxNode>>(methodSymbol, body, expressions);
-#else
             return (methodSymbol, body, expressions);
-#endif
         }
     }
 }

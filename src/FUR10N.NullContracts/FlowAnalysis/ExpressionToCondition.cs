@@ -72,7 +72,6 @@ namespace FUR10N.NullContracts.FlowAnalysis
             var expression = item.Value.Expression;
             switch (expression)
             {
-#if !PORTABLE
                 case IsPatternExpressionSyntax patternExpression:
                     {
                         var declarationPattern = patternExpression.Pattern as DeclarationPatternSyntax;
@@ -87,7 +86,6 @@ namespace FUR10N.NullContracts.FlowAnalysis
                         }
                         break;
                     }
-#endif
                 case BinaryExpressionSyntax binaryExpression:
                     {
                         var kind = expression.Kind();

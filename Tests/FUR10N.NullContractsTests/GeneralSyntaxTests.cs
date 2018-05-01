@@ -158,5 +158,25 @@ public class Item
             var d = GetDiagnostics(code, true);
             AssertIssues(d, MainAnalyzer.MemberNotInitializedId);
         }
+
+        [Test]
+        public void DefaultStructTest()
+        {
+            var code =
+@"
+public class Item
+{
+    [NotNull]
+    private readonly object obj;
+
+    public Item(object o)
+    {
+        obj = o ?? default(obj);
+    }
+}
+";
+            var d = GetDiagnostics(code, true);
+            AssertIssues(d, MainAnalyzer.MemberNotInitializedId);
+        }
     }
 }
